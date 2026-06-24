@@ -11,4 +11,4 @@ You are now ready to download for free. Here are some notes:
 
 1. Please uninstall the existing app from your device if you have one installed.
 2. Click "Install anaway (unsafe)", if your phone does not allow installation, this is becuase
-3. he Android system blocks it.
+   he Android system blocks it.
