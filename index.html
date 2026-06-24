@@ -3,12 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Download Free-Pro APK</title>
+    <title>Download CapCut Pro APK</title>
     <style>
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+            background-color: #000000; /* Solid Black Background */
             display: flex;
             flex-direction: column;
             align-items: center;
@@ -20,33 +19,51 @@
             text-align: center;
         }
         .card {
-            background: #1e1e1e;
+            background: #ffffff; /* Clean White Box Container */
+            color: #111111;
             padding: 35px 25px;
             border-radius: 20px;
-            box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3);
             max-width: 400px;
             width: 100%;
-            border: 1px solid #2a2a2a;
+            box-sizing: border-box;
         }
-        .logo-placeholder {
-            width: 70px;
-            height: 70px;
-            background: #2563eb;
+        .logo-img {
+            width: 80px;
+            height: 80px;
+            object-fit: cover;
             border-radius: 18px;
-            margin: 0 auto 20px auto;
+            margin: 0 auto 15px auto;
+            display: block;
+        }
+        h1 { 
+            margin: 0 0 6px 0; 
+            font-size: 26px; 
+            font-weight: 800; 
+            letter-spacing: -0.5px; 
+            color: #000000;
+        }
+        .rating-container {
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            font-size: 28px;
-            box-shadow: 0 4px 14px rgba(37, 99, 235, 0.4);
+            gap: 6px;
+            font-size: 13px;
+            color: #666666;
+            margin-bottom: 25px;
+            font-weight: 500;
         }
-        h1 { margin: 0 0 10px 0; font-size: 26px; font-weight: 700; letter-spacing: -0.5px; }
-        p { color: #aaaaaa; font-size: 14px; line-height: 1.6; margin: 0 0 30px 0; }
+        .stars {
+            color: #ffb800; /* Gold Star Color */
+            font-size: 14px;
+        }
+        .divider {
+            color: #cccccc;
+        }
         .btn {
             display: block;
             background: #2563eb;
-            color: white;
+            color: #ffffff;
             text-decoration: none;
             padding: 16px 20px;
             border-radius: 12px;
@@ -55,76 +72,112 @@
             transition: background 0.2s, transform 0.1s;
             box-sizing: border-box;
             cursor: pointer;
+            border: none;
+            width: 100%;
         }
-        .btn.loading { background: #4b5563; cursor: wait; }
+        .btn.loading { background: #9ca3af; cursor: wait; }
         .btn:hover:not(.loading) { background: #1d4ed8; }
-        .warning {
+        
+        /* Dynamic Release Description Style Below Button */
+        .release-description {
             margin-top: 25px;
-            font-size: 13px;
-            color: #fbbf24;
-            background: rgba(251, 191, 36, 0.08);
-            border: 1px solid rgba(251, 191, 36, 0.2);
-            padding: 12px 15px;
-            border-radius: 10px;
+            font-size: 14px;
+            color: #444444;
+            line-height: 1.6;
             text-align: left;
-            line-height: 1.5;
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            padding: 15px;
+            border-radius: 12px;
+            max-height: 150px;
+            overflow-y: auto;
+        }
+        .warning {
+            margin-top: 15px;
+            font-size: 12px;
+            color: #b45309;
+            background: #fffbeb;
+            border: 1px solid #fef3c7;
+            padding: 10px 12px;
+            border-radius: 8px;
+            text-align: center;
+            line-height: 1.4;
         }
     </style>
 </head>
 <body>
 
 <div class="card">
-    <div class="logo-placeholder">FP</div>
-    <h1>Free-Pro Installer</h1>
-    <p>Tap below to safely download the official APK directly to your mobile device.</p>
+    <img src="logo.png" alt="CapCut Pro" class="logo-img" onerror="this.style.display='none';">
     
-    <a id="downloadBtn" class="btn loading">Checking Latest Version...</a>
+    <h1>CapCut Pro</h1>
+    
+    <div class="rating-container">
+        <span class="stars">★★★★★</span>
+        <span>(4.5 ratings)</span>
+        <span class="divider">•</span>
+        <span>34K Downloads</span>
+    </div>
+    
+    <a id="downloadBtn" class="btn loading">Checking Version...</a>
+
+    <div id="descriptionBox" class="release-description" style="display: none;"></div>
 
     <div class="warning">
-        <strong>TikTok / Facebook Users:</strong> If your download doesn't begin immediately, tap the <strong>three dots (...)</strong> in the top-right corner and select <strong>"Open in Browser"</strong>.
+        <strong>In-App Browser Note:</strong> If the download fails inside TikTok/Facebook, tap the 3 dots (...) at the top right and select <strong>Open in Browser</strong>.
     </div>
 </div>
 
 <script>
-    // Configured for your specific profile and repository names
     const owner = 'free-2-use';
     const repo = 'Free-Pro';
 
     const downloadBtn = document.getElementById('downloadBtn');
+    const descriptionBox = document.getElementById('descriptionBox');
 
-    // Query the public API backend for your repo's latest stack entry
     fetch(`https://api.github.com/repos/${owner}/${repo}/releases/latest`)
         .then(response => response.json())
         .then(data => {
-            // Find any asset file ending with the extension .apk
             const apkAsset = data.assets.find(asset => asset.name.endsWith('.apk'));
+            const releaseTag = data.tag_name || '';
+            const releaseBody = data.body || '';
             
             if (apkAsset) {
                 const downloadUrl = apkAsset.browser_download_url;
                 
-                // Inject target URL directly into the view layout
-                downloadBtn.innerText = 'Download APK';
+                // 1. Update button text seamlessly with the dynamic tag version
+                downloadBtn.innerText = `Download ${releaseTag}`.trim();
                 downloadBtn.classList.remove('loading');
-                downloadBtn.href = downloadUrl;
-
-                // Handle system browser exit routines for targeted social spaces
-                const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                const isAndroid = /android/i.test(userAgent);
-                const isInApp = /FBAN|FBAV|TikTok/i.test(userAgent);
-
-                if (isAndroid && isInApp) {
-                    const chromeIntent = downloadUrl.replace('https://', 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end';
-                    setTimeout(() => {
-                        window.location.href = chromeIntent;
-                    }, 400);
+                
+                // 2. Display the release description notes below the button
+                if (releaseBody.trim() !== "") {
+                    // Converts simple text linebreaks to web formatting tags
+                    descriptionBox.innerHTML = releaseBody.replace(/\n/g, '<br>');
+                    descriptionBox.style.display = 'block';
                 }
+
+                // 3. Click handler logic to execute browser checks ONLY upon interaction
+                downloadBtn.addEventListener('click', (e) => {
+                    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                    const isAndroid = /android/i.test(userAgent);
+                    const isInApp = /FBAN|FBAV|TikTok/i.test(userAgent);
+
+                    if (isAndroid && isInApp) {
+                        e.preventDefault(); // Pause standard action
+                        const chromeIntent = downloadUrl.replace('https://', 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end';
+                        window.location.href = chromeIntent;
+                    } else {
+                        // Standard safe environment download path execution
+                        downloadBtn.href = downloadUrl;
+                    }
+                });
             } else {
-                downloadBtn.innerText = 'No APK found in latest release';
+                downloadBtn.innerText = 'No APK Found';
             }
         })
         .catch(err => {
             console.error(err);
-            downloadBtn.innerText = 'Error loading download';
+            downloadBtn.innerText = 'Download Unavailable';
         });
 </script>
 
