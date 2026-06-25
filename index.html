@@ -289,9 +289,95 @@
             opacity: 0.8;
             font-weight: 500;
         }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: rgba(15, 23, 42, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+        }
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+        .modal-content {
+            background: #fff;
+            padding: 24px;
+            border-radius: 20px;
+            max-width: 90%;
+            width: 320px;
+            position: relative;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.2);
+            transform: translateY(20px) scale(0.95);
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-align: left;
+            border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        .modal-overlay.active .modal-content {
+            transform: translateY(0) scale(1);
+        }
+        .modal-close {
+            position: absolute;
+            top: 16px;
+            right: 16px;
+            background: rgba(0,0,0,0.05);
+            border: none;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 18px;
+            cursor: pointer;
+            color: #64748B;
+            transition: background 0.2s;
+        }
+        .modal-close:hover {
+            background: rgba(0,0,0,0.1);
+            color: #0F172A;
+        }
+        .modal-header {
+            font-weight: 800;
+            font-size: 18px;
+            color: #0F172A;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .modal-body {
+            font-size: 14px;
+            color: #334155;
+            line-height: 1.6;
+        }
+        .modal-body strong {
+            color: #0F172A;
+        }
     </style>
 </head>
 <body>
+
+<!-- Popup Modal -->
+<div id="chromeNoticeModal" class="modal-overlay">
+    <div class="modal-content">
+        <button class="modal-close" id="closeModalBtn">&times;</button>
+        <div class="modal-header">Important note</div>
+        <div class="modal-body">
+            Before downloading, please make sure you are in Chrome. If you are not, tap the three dots (⋮) in the top right corner and select <strong>'Open in Chrome'</strong> or <strong>'Open in browser'</strong>.
+        </div>
+    </div>
+</div>
 
 <div class="blob blob-1"></div>
 <div class="blob blob-2"></div>
@@ -326,13 +412,35 @@
             </svg>
             <span>Checking Version...</span>
         </a>
-        <div class="security-note"><strong>⚠️ Important:</strong> Before downloading, please make sure you are in Chrome. If you are not, tap the three dots (⋮) in the top right corner and select <strong>'Open in Chrome'</strong> or <strong>'Open in browser'</strong>.</div>
+        <div class="security-note"><strong>Note:</strong> Android may show a "File might be harmful" warning. This is standard for apps outside the Play Store. Simply tap <strong>"Download anyway"</strong> to safely proceed.</div>
     </div>
 
     <div id="descriptionBox" class="release-description" style="display: none;"></div>
 </div>
 
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const modal = document.getElementById('chromeNoticeModal');
+        const closeBtn = document.getElementById('closeModalBtn');
+
+        // Show modal on load after a slight delay
+        setTimeout(() => {
+            modal.classList.add('active');
+        }, 500);
+
+        // Close modal
+        closeBtn.addEventListener('click', () => {
+            modal.classList.remove('active');
+        });
+
+        // Close on clicking outside
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                modal.classList.remove('active');
+            }
+        });
+    });
+
     const owner = 'free-2-use';
     const repo = 'Free-Pro';
 
