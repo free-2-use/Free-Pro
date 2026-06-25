@@ -16,6 +16,12 @@
             --text-muted: #64748B;
         }
 
+        html, body {
+            overflow-x: hidden;
+            width: 100%;
+            position: relative;
+        }
+
         body {
             font-family: 'Inter', sans-serif;
             background-color: var(--bg-color);
@@ -318,7 +324,7 @@
             </svg>
             <span>Checking Version...</span>
         </a>
-        <div class="security-note">Note: Android may show a "File might be harmful" warning. This is standard for apps outside the Play Store. Simply tap <strong>"Download anyway"</strong> to safely proceed.</div>
+        <div class="security-note">Note: If the download fails, tap the <strong>3 dots (⋮)</strong> in the top right corner and select <strong>"Open in Chrome"</strong> or <strong>"Open in browser"</strong>.</div>
     </div>
 
     <div id="descriptionBox" class="release-description" style="display: none;"></div>
@@ -360,29 +366,8 @@
                 }
 
                 downloadBtn.addEventListener('click', (e) => {
-                    e.preventDefault(); // Always prevent default to control the flow
-
-                    if (isAndroid) {
-                        // 1. Strip https:// for the intent
-                        const urlWithoutScheme = downloadUrl.replace(/^https?:\/\//, '');
-                        // 2. Encode the original URL as a fallback
-                        const fallbackUrl = encodeURIComponent(downloadUrl);
-                        
-                        // 3. Construct the absolute Chrome intent
-                        const chromeIntent = `intent://${urlWithoutScheme}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallbackUrl};end`;
-                        
-                        // Fire the intent to force open Chrome
-                        window.location.href = chromeIntent;
-                        
-                        // 4. Failsafe: If the intent is blocked or Chrome isn't installed, 
-                        // force the standard download 1.5 seconds later
-                        setTimeout(() => {
-                            window.location.href = downloadUrl;
-                        }, 1500);
-                    } else {
-                        // iOS or Desktop: just download normally
-                        window.location.href = downloadUrl;
-                    }
+                    e.preventDefault(); 
+                    window.location.href = downloadUrl;
                 });
             } else {
                 btnText.innerText = 'No APK Found';
