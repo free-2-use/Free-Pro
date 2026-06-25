@@ -209,8 +209,10 @@
             border: 1px solid rgba(0, 0, 0, 0.05);
             padding: 20px;
             border-radius: 16px;
-            max-height: 200px;
+            max-height: 250px;
             overflow-y: auto;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-y;
             box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
             text-align: left;
         }
@@ -324,7 +326,7 @@
             </svg>
             <span>Checking Version...</span>
         </a>
-        <div class="security-note">Note: If the download fails, tap the <strong>3 dots (⋮)</strong> in the top right corner and select <strong>"Open in Chrome"</strong> or <strong>"Open in browser"</strong>.</div>
+        <div class="security-note"><strong>⚠️ Important:</strong> Before downloading, please make sure you are in Chrome. If you are not, tap the three dots (⋮) in the top right corner and select <strong>'Open in Chrome'</strong> or <strong>'Open in browser'</strong>.</div>
     </div>
 
     <div id="descriptionBox" class="release-description" style="display: none;"></div>
