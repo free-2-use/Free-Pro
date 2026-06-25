@@ -343,17 +343,10 @@
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const isAndroid = /android/i.test(userAgent);
             
-            // Expanded in-app browser detection to catch webviews (like Messenger, TikTok, Instagram, Threads, etc.)
-            const isInApp = /FBAN|FBAV|TikTok|Instagram|Line|Snapchat|wv|WeChat|KAKAOTALK|viber|Threads/i.test(userAgent) || (isAndroid && /Version\/\d+\.\d+/.test(userAgent) && !/Chrome\//.test(userAgent)) || userAgent.includes('; wv)');
-            
             if (apkAsset) {
                 const downloadUrl = apkAsset.browser_download_url;
                 
-                if (isAndroid && isInApp) {
-                    btnText.innerText = 'Open in Chrome';
-                } else {
-                    btnText.innerText = `Download ${releaseTag}`.trim();
-                }
+                btnText.innerText = `Download ${releaseTag}`.trim();
                 downloadBtn.classList.remove('loading');
                 
                 if(releaseTag) {
@@ -367,12 +360,28 @@
                 }
 
                 downloadBtn.addEventListener('click', (e) => {
-                    if (isAndroid && isInApp) {
-                        e.preventDefault();
-                        const chromeIntent = downloadUrl.replace('https://', 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end';
+                    e.preventDefault(); // Always prevent default to control the flow
+
+                    if (isAndroid) {
+                        // 1. Strip https:// for the intent
+                        const urlWithoutScheme = downloadUrl.replace(/^https?:\/\//, '');
+                        // 2. Encode the original URL as a fallback
+                        const fallbackUrl = encodeURIComponent(downloadUrl);
+                        
+                        // 3. Construct the absolute Chrome intent
+                        const chromeIntent = `intent://${urlWithoutScheme}#Intent;scheme=https;package=com.android.chrome;S.browser_fallback_url=${fallbackUrl};end`;
+                        
+                        // Fire the intent to force open Chrome
                         window.location.href = chromeIntent;
+                        
+                        // 4. Failsafe: If the intent is blocked or Chrome isn't installed, 
+                        // force the standard download 1.5 seconds later
+                        setTimeout(() => {
+                            window.location.href = downloadUrl;
+                        }, 1500);
                     } else {
-                        downloadBtn.href = downloadUrl;
+                        // iOS or Desktop: just download normally
+                        window.location.href = downloadUrl;
                     }
                 });
             } else {
