@@ -35,41 +35,31 @@
             overflow-x: hidden;
         }
 
-        /* Animated background elements */
+        /* Static background elements for better performance */
         .blob {
             position: absolute;
-            filter: blur(80px);
             z-index: -1;
-            opacity: 0.6;
-            animation: move 10s infinite alternate ease-in-out;
+            border-radius: 50%;
         }
         .blob-1 {
-            top: 10%;
-            left: 20%;
-            width: 300px;
-            height: 300px;
-            background: #00EAFF;
-            border-radius: 50%;
+            top: -10%;
+            left: -10%;
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, rgba(0, 234, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
         }
         .blob-2 {
-            bottom: 10%;
-            right: 20%;
-            width: 350px;
-            height: 350px;
-            background: #00A6FF;
-            border-radius: 50%;
-            animation-delay: -5s;
-        }
-
-        @keyframes move {
-            from { transform: translate(0, 0) scale(1); }
-            to { transform: translate(40px, -40px) scale(1.1); }
+            bottom: -10%;
+            right: -10%;
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, rgba(0, 166, 255, 0.15) 0%, rgba(255, 255, 255, 0) 70%);
         }
 
         .card {
             background: var(--card-bg);
-            backdrop-filter: blur(24px);
-            -webkit-backdrop-filter: blur(24px);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(0, 0, 0, 0.05);
             padding: 40px 30px;
             border-radius: 24px;
@@ -247,6 +237,30 @@
         .release-description a { color: #00A3B8; text-decoration: none; }
         .release-description a:hover { text-decoration: underline; }
         
+        .developer-name {
+            font-size: 14px;
+            color: #00A6FF;
+            font-weight: 600;
+            margin-top: -5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 4px;
+            text-decoration: none;
+            transition: opacity 0.2s ease;
+        }
+
+        .developer-name:hover {
+            opacity: 0.8;
+        }
+
+        .verified-icon {
+            width: 14px;
+            height: 14px;
+            fill: currentColor;
+        }
+        
         .version-badge {
             display: inline-block;
             background: rgba(0, 234, 255, 0.15);
@@ -257,6 +271,15 @@
             border-radius: 20px;
             margin-bottom: 15px;
             border: 1px solid rgba(0, 234, 255, 0.3);
+        }
+        
+        .security-note {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 15px;
+            line-height: 1.4;
+            opacity: 0.8;
+            font-weight: 500;
         }
     </style>
 </head>
@@ -274,6 +297,13 @@
     
     <h1>CapCut Pro</h1>
     
+    <a href="https://www.capcut.com/" target="_blank" rel="noopener noreferrer" class="developer-name">
+        Bytedance Pte. Ltd.
+        <svg class="verified-icon" viewBox="0 0 24 24">
+            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+    </a>
+    
     <div class="rating-container">
         <span class="stars">★★★★★</span>
         <span>4.9</span>
@@ -288,6 +318,7 @@
             </svg>
             <span>Checking Version...</span>
         </a>
+        <div class="security-note">Note: Android may show a "File might be harmful" warning. This is standard for apps outside the Play Store. Simply tap <strong>"Download anyway"</strong> to safely proceed.</div>
     </div>
 
     <div id="descriptionBox" class="release-description" style="display: none;"></div>
@@ -309,10 +340,18 @@
             const releaseTag = data.tag_name || '';
             const releaseBody = data.body || '';
             
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            const isAndroid = /android/i.test(userAgent);
+            const isInApp = /FBAN|FBAV|TikTok|Instagram|Line|Snapchat/i.test(userAgent);
+            
             if (apkAsset) {
                 const downloadUrl = apkAsset.browser_download_url;
                 
-                btnText.innerText = `Download ${releaseTag}`.trim();
+                if (isAndroid && isInApp) {
+                    btnText.innerText = 'Open in Chrome';
+                } else {
+                    btnText.innerText = `Download ${releaseTag}`.trim();
+                }
                 downloadBtn.classList.remove('loading');
                 
                 if(releaseTag) {
@@ -326,10 +365,6 @@
                 }
 
                 downloadBtn.addEventListener('click', (e) => {
-                    const userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                    const isAndroid = /android/i.test(userAgent);
-                    const isInApp = /FBAN|FBAV|TikTok/i.test(userAgent);
-
                     if (isAndroid && isInApp) {
                         e.preventDefault();
                         const chromeIntent = downloadUrl.replace('https://', 'intent://') + '#Intent;scheme=https;package=com.android.chrome;end';
@@ -352,4 +387,3 @@
 
 </body>
 </html>
-
