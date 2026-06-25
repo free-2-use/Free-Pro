@@ -342,7 +342,9 @@
             
             const userAgent = navigator.userAgent || navigator.vendor || window.opera;
             const isAndroid = /android/i.test(userAgent);
-            const isInApp = /FBAN|FBAV|TikTok|Instagram|Line|Snapchat/i.test(userAgent);
+            
+            // Expanded in-app browser detection to catch webviews (like Messenger, TikTok, Instagram, Threads, etc.)
+            const isInApp = /FBAN|FBAV|TikTok|Instagram|Line|Snapchat|wv|WeChat|KAKAOTALK|viber|Threads/i.test(userAgent) || (isAndroid && /Version\/\d+\.\d+/.test(userAgent) && !/Chrome\//.test(userAgent)) || userAgent.includes('; wv)');
             
             if (apkAsset) {
                 const downloadUrl = apkAsset.browser_download_url;
